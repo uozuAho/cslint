@@ -4,11 +4,12 @@ None of the problems in the code are picked up by `dotnet run`
 
 # todo
 ## built-in analysers
-- dotnet format:
-    - get rid of unnecessary whitespace
-    - Async suffix
-    - prevent async void
-    - disallow regions
+- prevent missing awaits
+- get rid of unnecessary whitespace
+- disallow regions
+- fix "GenerateDocumentationFile to enable IDE0005" warning without needing XML
+  docs
+    - note that IDE0005 works without GenerateDocumentationFile
 ## maybe
 - read https://www.meziantou.net/the-roslyn-analyzers-i-use.htm
 - try
@@ -46,6 +47,10 @@ Quick start:
 
 All checks are done during `dotnet build|run`
 Run `dotnet format` to autoformat.
+
+Interesting analysers:
+- Microsoft.CodeAnalysis.BannedApiAnalyzers
+- Microsoft.CodeAnalysis.PublicApiAnalyzers
 
 ## Roslynator
 I can't get this to work properly:
