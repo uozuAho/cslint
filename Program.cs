@@ -1,4 +1,7 @@
-﻿namespace cslint
+﻿// IDE0005: unnecessary import
+using System.IO;
+
+namespace cslint
 {
     public static class Program
     {
