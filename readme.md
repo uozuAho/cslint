@@ -5,8 +5,6 @@ None of the problems in the code are picked up by `dotnet run`
 # todo
 ## built-in analysers
 - dotnet format:
-    - don't change `var` to `int`
-    - why `ConfigureAwait`? is it really necessary?
     - get rid of unnecessary whitespace
     - Async suffix
     - prevent async void

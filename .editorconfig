@@ -9,3 +9,5 @@ insert_final_newline = true
 
 [*.cs]
 dotnet_analyzer_diagnostic.category-Style.severity = error
+dotnet_diagnostic.IDE0008.severity = none  # prefer var to int
+dotnet_diagnostic.CA2007.severity = none   # avoid ConfigureAwait everywhere (see https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2007)

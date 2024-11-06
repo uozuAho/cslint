@@ -1,4 +1,4 @@
-﻿// IDE0005: unnecessary import
+﻿// unnecessary import
 using System.IO;
 
 namespace cslint
@@ -7,8 +7,8 @@ namespace cslint
     {
         public static async Task<int> Main()
         {
-            Console.WriteLine("yo");
             var asdf = await DoThing();
+            Console.WriteLine(asdf);
 
             // long line
             var alskdjflaksjdflkjasjdfljkasdjfalskdfj = 123456789 + 123456789 + 123456789 + 123456789 + 123456789 + 123456789;
@@ -24,7 +24,7 @@ namespace cslint
         {
             await Task.Delay(1);
             // if block should be in curlies
-            if (1 == 1) Console.Write("yep");
+            if (1 == 1) Console.Write(1);
             return 1;
 
             // unnecessary whitespace
