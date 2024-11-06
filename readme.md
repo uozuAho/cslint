@@ -3,7 +3,6 @@
 None of the problems in the code are picked up by `dotnet run`
 
 # todo
-- read https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview?tabs=net-8
 - read https://www.meziantou.net/the-roslyn-analyzers-i-use.htm
 - try
     - https://github.com/dotnet/roslyn-analyzers
@@ -24,6 +23,22 @@ None of the problems in the code are picked up by `dotnet run`
     - custom rules?
 
 # Options
+## Built-in analysers
+See https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview?tabs=net-8
+
+Quick start:
+
+- enable all rules: add `<AnalysisMode>All</AnalysisMode>` to your project file
+- treat warnings as errors:
+  `<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>`
+- check code style during build: add
+  `<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>` to your project file
+- treat all style warnings as errors: add
+  `dotnet_analyzer_diagnostic.category-Style.severity = error` to your
+  editorconfig
+
+All checks are done during `dotnet build|run`
+
 ## Roslynator
 I can't get this to work properly:
 - install & analyse works
