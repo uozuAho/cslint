@@ -3,36 +3,23 @@
 None of the problems in the code are picked up by `dotnet run`
 
 # todo
-## built-in analysers
+- set stylecop warnings to errors
 - prevent missing awaits
-- get rid of unnecessary whitespace
-- disallow regions
 - fix "GenerateDocumentationFile to enable IDE0005" warning without needing XML
   docs
     - note that IDE0005 works without GenerateDocumentationFile
-## maybe
-- read https://www.meziantou.net/the-roslyn-analyzers-i-use.htm
-- try
-    - https://github.com/dotnet/roslyn-analyzers
-    - Microsoft.CodeAnalysis.FxCopAnalyzers
-    - https://github.com/DotNetAnalyzers/StyleCopAnalyzers
-- try roslynator again
-
-# What I want in a linter
-- cli
-- naming rules: eg. async suffix
-- whitespace, brackets
-- autofix
-- ide integration
-- ability to ignore rules in code eg. //ignoreNextLine
-- ability to ignore all analysis (eg. gradual integration, need to get a build
-  out fast)
-- maybe
-    - custom rules?
+- check IDE integration
+- how much time does this add to builds?
 
 # Options
 ## Built-in analysers
 See https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview?tabs=net-8
+
+These work well, and are available without any extra packages (although you may
+want to add more analysers to support your style requirements).
+
+When configured as below, they run during build, and many violations can be
+fixed by running `dotnet format`.
 
 Quick start:
 
@@ -48,7 +35,14 @@ Quick start:
 All checks are done during `dotnet build|run`
 Run `dotnet format` to autoformat.
 
-Interesting analysers:
+Analysers added to this project
+- Microsoft.VisualStudio.Threading.Analyzers:
+    - naming: Async suffix, prevent async void, more
+    - doesn't catch missing awaits
+- StyleCop.Analyzers
+    - whitespace, regions, more
+
+Other interesting analysers:
 - Microsoft.CodeAnalysis.BannedApiAnalyzers
 - Microsoft.CodeAnalysis.PublicApiAnalyzers
 
