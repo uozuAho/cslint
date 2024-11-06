@@ -3,6 +3,15 @@
 None of the problems in the code are picked up by `dotnet run`
 
 # todo
+## built-in analysers
+- dotnet format:
+    - don't change `var` to `int`
+    - why `ConfigureAwait`? is it really necessary?
+    - get rid of unnecessary whitespace
+    - Async suffix
+    - prevent async void
+    - disallow regions
+## maybe
 - read https://www.meziantou.net/the-roslyn-analyzers-i-use.htm
 - try
     - https://github.com/dotnet/roslyn-analyzers
@@ -38,6 +47,7 @@ Quick start:
   editorconfig
 
 All checks are done during `dotnet build|run`
+Run `dotnet format` to autoformat.
 
 ## Roslynator
 I can't get this to work properly:
