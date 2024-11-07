@@ -30,7 +30,7 @@ want to add more analysers to support your style requirements).
 When configured as below, they run during build, and many violations can be
 fixed by running `dotnet format`.
 
-Quick start:
+Quick start to add to your projects:
 
 - enable all rules: add `<AnalysisMode>All</AnalysisMode>` to your project file
 - treat warnings as errors:
