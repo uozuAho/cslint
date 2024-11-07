@@ -14,7 +14,7 @@ namespace cslint
             var alskdjflaksjdflkjasjdfljkasdjfalskdfj = 123456789 + 123456789 + 123456789 + 123456789 + 123456789 + 123456789;
             Console.WriteLine(alskdjflaksjdflkjasjdfljkasdjfalskdfj);
 
-            // missing await
+            // missing await. why doesn't this trigger CS4014? https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs4014
             var x = DoThing();
             return 0;
         }

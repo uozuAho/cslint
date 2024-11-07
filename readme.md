@@ -1,15 +1,24 @@
 # Example project to test linters
 
-None of the problems in the code are picked up by `dotnet run`
+Seems like the modern way to do it (as of 2024) is to use roslyn analysers, that
+work during build and as part of `dotnet format`.
+
+This project uses built-in analysers and a few extras. See details below.
+
+```sh
+# to see warnings/errors:
+dotnet build
+# to fix:
+dotnet format
+```
 
 # todo
-- set stylecop warnings to errors
-- prevent missing awaits
+- fix long lines: not part of built-in or added analysers :(
+- prevent missing awaits. CS4014. Should be caught, why isn't it?
 - fix "GenerateDocumentationFile to enable IDE0005" warning without needing XML
   docs
     - note that IDE0005 works without GenerateDocumentationFile
-- check IDE integration
-- how much time does this add to builds?
+- set stylecop warnings to errors. not possible? https://stackoverflow.com/questions/24804315/warnings-as-errors-does-not-apply-to-stylecop-warnings
 
 # Options
 ## Built-in analysers
@@ -35,14 +44,18 @@ Quick start:
 All checks are done during `dotnet build|run`
 Run `dotnet format` to autoformat.
 
-Analysers added to this project
-- Microsoft.VisualStudio.Threading.Analyzers:
+### Built-in rules
+- quality (CA*): https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/
+- style (IDE*): https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/
+
+### Analysers added to this project
+- [Microsoft.VisualStudio.Threading.Analyzers](https://github.com/microsoft/vs-threading/blob/main/doc/analyzers/index.md):
     - naming: Async suffix, prevent async void, more
     - doesn't catch missing awaits
-- StyleCop.Analyzers
+- [StyleCop.Analyzers](https://github.com/DotNetAnalyzers/StyleCopAnalyzers)
     - whitespace, regions, more
 
-Other interesting analysers:
+### Other interesting analysers:
 - Microsoft.CodeAnalysis.BannedApiAnalyzers
 - Microsoft.CodeAnalysis.PublicApiAnalyzers
 
