@@ -14,10 +14,6 @@ dotnet format
 
 # todo
 - fsi
-    - add cs proj file elements
-    - add nuget packages to all projects
-        Microsoft.VisualStudio.Threading.Analyzers
-        StyleCop.Analyzers
     - add editorconfig elements
         <!-- [*.cs]
         dotnet_analyzer_diagnostic.category-Style.severity = error

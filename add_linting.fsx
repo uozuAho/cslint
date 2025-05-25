@@ -3,6 +3,7 @@ open System.Text
 open System.Xml
 open System.Xml.Linq
 open System
+open System.Diagnostics
 
 let getAllCsprojFiles (directory: string) =
     Directory.GetFiles(directory, "*.csproj", SearchOption.AllDirectories)
@@ -40,6 +41,26 @@ let addLintSettings (csProjFile: string) =
         saveCsProj csProjFile doc
         printfn $"Updated: {csProjFile}"
 
+let runDotnetAddPackage (projectPath: string) (packageName: string) =
+    let psi = ProcessStartInfo()
+    psi.FileName <- "dotnet"
+    psi.Arguments <- $"add \"{projectPath}\" package {packageName}"
+    psi.RedirectStandardOutput <- true
+    psi.RedirectStandardError <- true
+    psi.UseShellExecute <- false
+
+    use proc = new Process()
+    proc.StartInfo <- psi
+    proc.Start() |> ignore
+    let output = proc.StandardOutput.ReadToEnd()
+    let error = proc.StandardError.ReadToEnd()
+    proc.WaitForExit()
+
+    if proc.ExitCode = 0 then
+        printfn $"✓ Added package {packageName} to {projectPath}"
+    else
+        printfn $"✗ Failed to add {packageName} to {projectPath}\n{error}"
+
 let main (argv: string array) =
     if argv.Length <> 1 then
         printfn $"Usage: dotnet fsi {__SOURCE_FILE__} <directory>"
@@ -49,6 +70,9 @@ let main (argv: string array) =
         let files = getAllCsprojFiles rootDir
         for file in files do
             addLintSettings file
+            runDotnetAddPackage file "Microsoft.VisualStudio.Threading.Analyzers"
+            runDotnetAddPackage file "StyleCop.Analyzers"
+
         0
 
 
