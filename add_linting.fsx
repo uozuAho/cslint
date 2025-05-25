@@ -5,13 +5,16 @@ open System.Xml.Linq
 open System
 open System.Diagnostics
 
+
 let getAllCsprojFiles (directory: string) =
     Directory.GetFiles(directory, "*.csproj", SearchOption.AllDirectories)
+
 
 let getElement (parent: XElement) (name: string) =
     match parent.Element(XName.Get name) with
     | null -> Error $"{parent.Name}.{name} not found"
     | el -> Ok el
+
 
 let ensureElement (parent: XElement) (name: string) (value: string) =
     match parent.Element(XName.Get name) with
@@ -21,6 +24,7 @@ let ensureElement (parent: XElement) (name: string) (value: string) =
     | elem ->
         elem.Value <- value
 
+
 let saveCsProj (filePath:string) (doc:XDocument) =
     let settings = XmlWriterSettings()
     settings.Indent <- true
@@ -29,6 +33,7 @@ let saveCsProj (filePath:string) (doc:XDocument) =
 
     use writer = XmlWriter.Create(filePath, settings)
     doc.Save(writer)
+
 
 let addLintSettings (csProjFile: string) =
     let doc = XDocument.Load csProjFile
@@ -40,6 +45,7 @@ let addLintSettings (csProjFile: string) =
         ensureElement propertyGroup "CodeAnalysisTreatWarningsAsErrors" "true"
         saveCsProj csProjFile doc
         printfn $"Updated: {csProjFile}"
+
 
 let runDotnetAddPackage (projectPath: string) (packageName: string) =
     let psi = ProcessStartInfo()
@@ -61,12 +67,31 @@ let runDotnetAddPackage (projectPath: string) (packageName: string) =
     else
         printfn $"✗ Failed to add {packageName} to {projectPath}\n{error}"
 
+
+let ensureEditorConfigSettings (filePath: string) =
+    // assumes there's no existing *.cs section or any matching settings
+    let newSettingLines = [
+        ""
+        "[*.cs]"
+        "dotnet_analyzer_diagnostic.category-Style.severity = error   # warnings = error"
+        "dotnet_diagnostic.IDE0008.severity = none                    # prefer var to int"
+        "dotnet_diagnostic.CA2007.severity = none                     # avoid ConfigureAwait everywhere"
+        "dotnet_diagnostic.VSTHRD100.severity = error                 # never use async void"
+        "dotnet_diagnostic.SA0001.severity = none                     # XML comment analysis"
+        "dotnet_diagnostic.SA1300.severity = none                     # cslint should begin with caps"
+        "dotnet_diagnostic.SA1633.severity = none                     # project file header"
+    ]
+
+    File.AppendAllLines(filePath, newSettingLines)
+
+
 let main (argv: string array) =
     if argv.Length <> 1 then
         printfn $"Usage: dotnet fsi {__SOURCE_FILE__} <directory>"
         1
     else
         let rootDir = argv.[0]
+        ensureEditorConfigSettings (Path.Combine [|rootDir; ".editorconfig"|])
         let files = getAllCsprojFiles rootDir
         for file in files do
             addLintSettings file

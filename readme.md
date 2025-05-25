@@ -14,16 +14,7 @@ dotnet format
 
 # todo
 - fsi
-    - add editorconfig elements
-        <!-- [*.cs]
-        dotnet_analyzer_diagnostic.category-Style.severity = error
-        dotnet_diagnostic.IDE0008.severity = none     # prefer var to int
-        dotnet_diagnostic.CA2007.severity = none      # avoid ConfigureAwait everywhere (see https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2007)
-        dotnet_diagnostic.VSTHRD100.severity = error  # never use async void (require in-code override)
-
-        dotnet_diagnostic.SA0001.severity = none      # XML comment analysis
-        dotnet_diagnostic.SA1300.severity = none      # cslint should begin with caps
-        dotnet_diagnostic.SA1633.severity = none      # project file header -->
+    - format fsx file
 - fix long lines: not part of built-in or added analysers :(
 - prevent missing awaits. CS4014. Should be caught, why isn't it?
 - fix "GenerateDocumentationFile to enable IDE0005" warning without needing XML
