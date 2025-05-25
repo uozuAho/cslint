@@ -1,34 +1,44 @@
-open System
 open System.IO
+open System.Text
+open System.Xml
 open System.Xml.Linq
+open System
 
 let getAllCsprojFiles (directory: string) =
     Directory.GetFiles(directory, "*.csproj", SearchOption.AllDirectories)
+
+let getElement (parent: XElement) (name: string) =
+    match parent.Element(XName.Get name) with
+    | null -> Error $"{parent.Name}.{name} not found"
+    | el -> Ok el
 
 let ensureElement (parent: XElement) (name: string) (value: string) =
     match parent.Element(XName.Get name) with
     | null ->
         let added = XElement(XName.Get name, value)
-        parent.Add(added)
-        added
+        parent.Add added
     | elem ->
         elem.Value <- value
-        elem
 
-let updateCsprojFile (filePath: string) =
-    try
-        let doc = XDocument.Load(filePath)
-        let ns = doc.Root.Name.Namespace
+let saveCsProj (filePath:string) (doc:XDocument) =
+    let settings = XmlWriterSettings()
+    settings.Indent <- true
+    settings.OmitXmlDeclaration <- true
+    settings.Encoding <- Encoding.UTF8
 
-        let propertyGroup = ensureElement doc.Root "PropertyGroup" ""
+    use writer = XmlWriter.Create(filePath, settings)
+    doc.Save(writer)
 
-        ensureElement propertyGroup "AnalysisMode" "All" |> ignore
-        ensureElement propertyGroup "CodeAnalysisTreatWarningsAsErrors" "true" |> ignore
-
-        doc.Save(filePath)
-        printfn $"Updated: {filePath}"
-    with ex ->
-        printfn $"Error processing {filePath}: {ex.Message}"
+let addLintSettings (csProjFile: string) =
+    let doc = XDocument.Load csProjFile
+    match getElement doc.Root "PropertyGroup" with
+    | Error msg -> raise (Exception $"In {csProjFile}: {msg}")
+    | Ok propertyGroup ->
+        ensureElement propertyGroup "AnalysisMode" "All"
+        ensureElement propertyGroup "EnforceCodeStyleInBuild" "true"
+        ensureElement propertyGroup "CodeAnalysisTreatWarningsAsErrors" "true"
+        saveCsProj csProjFile doc
+        printfn $"Updated: {csProjFile}"
 
 let main (argv: string array) =
     if argv.Length <> 1 then
@@ -38,7 +48,7 @@ let main (argv: string array) =
         let rootDir = argv.[0]
         let files = getAllCsprojFiles rootDir
         for file in files do
-            updateCsprojFile file
+            addLintSettings file
         0
 
 
