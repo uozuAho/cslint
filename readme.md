@@ -7,10 +7,12 @@ This project uses built-in analysers and a few extras. See details below.
 
 # Example: run in this project
 ```sh
-# to see warnings/errors:
-dotnet build
+# to see existing warnings/errors:
+dotnet build --force --no-incremental
 # add linting settings to this project:
 dotnet fsi add_linting.fsx .
+# to see warnings/errors after adding linting:
+dotnet build --force --no-incremental
 # fix formatting issues:
 dotnet format
 ```
@@ -34,6 +36,7 @@ dotnet format
 # todo
 - fsi
     - format fsx file
+- get rid of this warning: `CSC : warning EnableGenerateDocumentationFile: Set MSBuild property 'GenerateDocumentationFile' to 'true' in project file to enable IDE0005 (Remove unnecessary usings/imports) on build (https://github.com/dotnet/roslyn/issues/41640) [/home/woz/woz/cslint/cslint.csproj]`
 - fix long lines: not part of built-in or added analysers :(
 - prevent missing awaits. CS4014. Should be caught, why isn't it?
 - fix "GenerateDocumentationFile to enable IDE0005" warning without needing XML

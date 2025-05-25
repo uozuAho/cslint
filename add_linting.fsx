@@ -97,7 +97,6 @@ let main (argv: string array) =
             addLintSettings file
             runDotnetAddPackage file "Microsoft.VisualStudio.Threading.Analyzers"
             runDotnetAddPackage file "StyleCop.Analyzers"
-
         0
 
 
