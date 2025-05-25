@@ -37,6 +37,7 @@ dotnet format
 
 # todo
 - fix long lines: not part of built-in or added analysers :(
+- `dotnet format` quirk: some fixes take two runs to fix
 - CS4014 quirk: `dotnet fix` applies a discard instead of awaiting the call.
   Why? I want to await it. Example:
     - ```cs

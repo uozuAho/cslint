@@ -41,6 +41,9 @@ namespace cslint
 
         private static void SomeSyncMethod()
         {
+            // dotnet format quirk:
+            // I want to await this, not discard.
+            // Also, this takes two passes of dotnet format to fix
             BadAsyncVoidFunc();
         }
 
