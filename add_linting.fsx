@@ -80,13 +80,12 @@ let ensureEditorConfigSettings (filePath: string) =
           "[*.cs]"
           "dotnet_analyzer_diagnostic.category-Style.severity = error   # warnings = error"
           "dotnet_diagnostic.IDE0008.severity = none                    # prefer var to int"
-          "dotnet_diagnostic.CA2007.severity = none                     # avoid ConfigureAwait everywhere"
+          "dotnet_diagnostic.CA2007.severity = none                     # avoid ConfigureAwait everywhere (intended for libraries)"
           "dotnet_diagnostic.CS1591.severity = none                     # ignore missing XML docs"
           "dotnet_diagnostic.VSTHRD100.severity = error                 # never use async void"
           "dotnet_diagnostic.SA0001.severity = none                     # ignore XML comment analysis"
-          "dotnet_diagnostic.SA1300.severity = none                     # cslint should begin with caps TODO PROLLY REMOVE"
           "dotnet_diagnostic.SA1600.severity = none                     # ignore missing XML docs"
-          "dotnet_diagnostic.SA1633.severity = none                     # project file header TODO WHATS THIS" ]
+          "dotnet_diagnostic.SA1633.severity = none                     # source files don't need 'header' doc comments" ]
 
     File.AppendAllLines(filePath, newSettingLines)
 
