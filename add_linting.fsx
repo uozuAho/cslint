@@ -30,11 +30,9 @@ let updateCsprojFile (filePath: string) =
     with ex ->
         printfn $"Error processing {filePath}: {ex.Message}"
 
-/// Main entry point
-[<EntryPoint>]
-let main argv =
+let main (argv: string array) =
     if argv.Length <> 1 then
-        printfn "Usage: dotnet fsi script.fsx <directory>"
+        printfn $"Usage: dotnet fsi {__SOURCE_FILE__} <directory>"
         1
     else
         let rootDir = argv.[0]
@@ -42,3 +40,7 @@ let main argv =
         for file in files do
             updateCsprojFile file
         0
+
+
+let args = fsi.CommandLineArgs |> Array.tail
+main args
