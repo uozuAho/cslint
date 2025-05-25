@@ -21,11 +21,10 @@ let ensureElement (parent: XElement) (name: string) (value: string) =
     | null ->
         let added = XElement(XName.Get name, value)
         parent.Add added
-    | elem ->
-        elem.Value <- value
+    | elem -> elem.Value <- value
 
 
-let saveCsProj (filePath:string) (doc:XDocument) =
+let saveCsProj (filePath: string) (doc: XDocument) =
     let settings = XmlWriterSettings()
     settings.Indent <- true
     settings.OmitXmlDeclaration <- true
@@ -37,6 +36,7 @@ let saveCsProj (filePath:string) (doc:XDocument) =
 
 let addLintSettings (csProjFile: string) =
     let doc = XDocument.Load csProjFile
+
     match getElement doc.Root "PropertyGroup" with
     | Error msg -> raise (Exception $"In {csProjFile}: {msg}")
     | Ok propertyGroup ->
@@ -70,17 +70,16 @@ let runDotnetAddPackage (projectPath: string) (packageName: string) =
 
 let ensureEditorConfigSettings (filePath: string) =
     // assumes there's no existing *.cs section or any matching settings
-    let newSettingLines = [
-        ""
-        "[*.cs]"
-        "dotnet_analyzer_diagnostic.category-Style.severity = error   # warnings = error"
-        "dotnet_diagnostic.IDE0008.severity = none                    # prefer var to int"
-        "dotnet_diagnostic.CA2007.severity = none                     # avoid ConfigureAwait everywhere"
-        "dotnet_diagnostic.VSTHRD100.severity = error                 # never use async void"
-        "dotnet_diagnostic.SA0001.severity = none                     # XML comment analysis"
-        "dotnet_diagnostic.SA1300.severity = none                     # cslint should begin with caps"
-        "dotnet_diagnostic.SA1633.severity = none                     # project file header"
-    ]
+    let newSettingLines =
+        [ ""
+          "[*.cs]"
+          "dotnet_analyzer_diagnostic.category-Style.severity = error   # warnings = error"
+          "dotnet_diagnostic.IDE0008.severity = none                    # prefer var to int"
+          "dotnet_diagnostic.CA2007.severity = none                     # avoid ConfigureAwait everywhere"
+          "dotnet_diagnostic.VSTHRD100.severity = error                 # never use async void"
+          "dotnet_diagnostic.SA0001.severity = none                     # XML comment analysis"
+          "dotnet_diagnostic.SA1300.severity = none                     # cslint should begin with caps"
+          "dotnet_diagnostic.SA1633.severity = none                     # project file header" ]
 
     File.AppendAllLines(filePath, newSettingLines)
 
@@ -91,12 +90,14 @@ let main (argv: string array) =
         1
     else
         let rootDir = argv.[0]
-        ensureEditorConfigSettings (Path.Combine [|rootDir; ".editorconfig"|])
+        ensureEditorConfigSettings (Path.Combine [| rootDir; ".editorconfig" |])
         let files = getAllCsprojFiles rootDir
+
         for file in files do
             addLintSettings file
             runDotnetAddPackage file "Microsoft.VisualStudio.Threading.Analyzers"
             runDotnetAddPackage file "StyleCop.Analyzers"
+
         0
 
 
