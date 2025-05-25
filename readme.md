@@ -5,19 +5,51 @@ work during build and as part of `dotnet format`.
 
 This project uses built-in analysers and a few extras. See details below.
 
+# Example: run in this project
 ```sh
-# to see warnings/errors:
-dotnet build
-# to fix:
+# to see existing warnings/errors:
+dotnet build --force --no-incremental
+# add linting settings to this project:
+dotnet fsi add_linting.fsx .
+# to see warnings/errors after adding linting:
+dotnet build --force --no-incremental
+# fix formatting issues:
+dotnet format
+```
+
+# Quick start: add linting to your project
+OVERWRITES YOUR PROJECT FILES! Make sure they're in source control.
+
+This adds my opinionated settings to your project.
+
+```sh
+# see all warnings/errors before adding linting:
+pushd <your project root>
+dotnet build --force --no-incremental
+popd
+dotnet fsi add_linting.fsx <your project root>
+pushd <your project root>
+# see all warnings/errors:
+dotnet build --force --no-incremental
+# auto-fix where possible:
 dotnet format
 ```
 
 # todo
 - fix long lines: not part of built-in or added analysers :(
-- prevent missing awaits. CS4014. Should be caught, why isn't it?
-- fix "GenerateDocumentationFile to enable IDE0005" warning without needing XML
-  docs
-    - note that IDE0005 works without GenerateDocumentationFile
+- `dotnet format` quirk: some fixes take two runs to fix
+- CS4014 quirk: `dotnet fix` applies a discard instead of awaiting the call.
+  Why? I want to await it. Example:
+    - ```cs
+      // before dotnet fix
+      DoThingAsync();
+      // after dotnet fix
+      _ = DoThingAsync();
+      ```
+    - see
+        - https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs4014
+        - https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/functional/discards
+- make add_linting.fsx easier to tweak
 - set stylecop warnings to errors. not possible? https://stackoverflow.com/questions/24804315/warnings-as-errors-does-not-apply-to-stylecop-warnings
 
 # Options
@@ -27,22 +59,8 @@ See https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview
 These work well, and are available without any extra packages (although you may
 want to add more analysers to support your style requirements).
 
-When configured as below, they run during build, and many violations can be
-fixed by running `dotnet format`.
-
-Quick start to add to your projects:
-
-- enable all rules: add `<AnalysisMode>All</AnalysisMode>` to your project file
-- treat warnings as errors:
-  `<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>`
-- check code style during build: add
-  `<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>` to your project file
-- treat all style warnings as errors: add
-  `dotnet_analyzer_diagnostic.category-Style.severity = error` to your
-  editorconfig
-
-All checks are done during `dotnet build|run`
-Run `dotnet format` to autoformat.
+Using the settings added by `add_linting.fsx`, they run during build, and many
+violations can be fixed by running `dotnet format`.
 
 ### Built-in rules
 - quality (CA*): https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/

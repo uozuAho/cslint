@@ -15,6 +15,7 @@ namespace cslint
             Console.WriteLine(alskdjflaksjdflkjasjdfljkasdjfalskdfj);
 
             // missing await. why doesn't this trigger CS4014? https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs4014
+            // I want to await this, not _ = DoThing();
             var x = DoThing();
             return 0;
         }
@@ -25,6 +26,7 @@ namespace cslint
             await Task.Delay(1);
             // if block should be in curlies
             if (1 == 1) Console.Write(1);
+            SomeSyncMethod();
             return 1;
 
             // unnecessary whitespace
@@ -35,6 +37,14 @@ namespace cslint
         private static async void BadAsyncVoidFunc()
         {
             await Task.Delay(1);
+        }
+
+        private static void SomeSyncMethod()
+        {
+            // dotnet format quirk:
+            // I want to await this, not discard.
+            // Also, this takes two passes of dotnet format to fix
+            BadAsyncVoidFunc();
         }
 
         // regions suck
