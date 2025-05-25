@@ -20,7 +20,7 @@ dotnet format
 # Quick start: add linting to your project
 OVERWRITES YOUR PROJECT FILES! Make sure they're in source control.
 
-This adds my opinionated settings to your project.
+This adds my opinionated settings to your project. You should review these.
 
 ```sh
 # see all warnings/errors before adding linting:
@@ -37,7 +37,18 @@ dotnet format
 
 # todo
 - fix long lines: not part of built-in or added analysers :(
-- `dotnet format` quirk: some fixes take two runs to fix
+- fix/find workarounds for quirks below
+
+# quirks
+`dotnet format` seems a little rough compared to `eslint`. Problems I've found
+are below. Note these may be due to individual and/or conflicting analysers.
+
+- some fixes take two runs to fix eg.
+    - run 1: async void method changed to async task
+    - run 2: fix non-awaiting caller (badly, see CS4014 below)
+- some fixes break the build. eg.
+    - `var asdf = new[] {new[] {1}, new[] {2}};` changes to
+    - `var asdf = new[] {new[] [1], [2]}` <--- this does not compile
 - CS4014 quirk: `dotnet fix` applies a discard instead of awaiting the call.
   Why? I want to await it. Example:
     - ```cs
