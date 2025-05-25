@@ -34,9 +34,7 @@ dotnet format
 ```
 
 # todo
-- fsi
-    - format fsx file
-- get rid of this warning: `CSC : warning EnableGenerateDocumentationFile: Set MSBuild property 'GenerateDocumentationFile' to 'true' in project file to enable IDE0005 (Remove unnecessary usings/imports) on build (https://github.com/dotnet/roslyn/issues/41640) [/home/woz/woz/cslint/cslint.csproj]`
+- get rid of cslint specific stuff in editorconfig
 - fix long lines: not part of built-in or added analysers :(
 - prevent missing awaits. CS4014. Should be caught, why isn't it?
 - fix "GenerateDocumentationFile to enable IDE0005" warning without needing XML

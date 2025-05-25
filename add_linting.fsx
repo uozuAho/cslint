@@ -43,6 +43,11 @@ let addLintSettings (csProjFile: string) =
         ensureElement propertyGroup "AnalysisMode" "All"
         ensureElement propertyGroup "EnforceCodeStyleInBuild" "true"
         ensureElement propertyGroup "CodeAnalysisTreatWarningsAsErrors" "true"
+
+        // without this, you get "CSC : warning EnableGenerateDocumentationFile: Set MSBuild property 'GenerateDocumentationFile' to 'true' in project file to enable IDE0005..."
+        // with it, you have to disable more XML doc checks. Dang.
+        ensureElement propertyGroup "GenerateDocumentationFile" "true"
+
         saveCsProj csProjFile doc
         printfn $"Updated: {csProjFile}"
 
@@ -76,10 +81,12 @@ let ensureEditorConfigSettings (filePath: string) =
           "dotnet_analyzer_diagnostic.category-Style.severity = error   # warnings = error"
           "dotnet_diagnostic.IDE0008.severity = none                    # prefer var to int"
           "dotnet_diagnostic.CA2007.severity = none                     # avoid ConfigureAwait everywhere"
+          "dotnet_diagnostic.CS1591.severity = none                     # ignore missing XML docs"
           "dotnet_diagnostic.VSTHRD100.severity = error                 # never use async void"
-          "dotnet_diagnostic.SA0001.severity = none                     # XML comment analysis"
-          "dotnet_diagnostic.SA1300.severity = none                     # cslint should begin with caps"
-          "dotnet_diagnostic.SA1633.severity = none                     # project file header" ]
+          "dotnet_diagnostic.SA0001.severity = none                     # ignore XML comment analysis"
+          "dotnet_diagnostic.SA1300.severity = none                     # cslint should begin with caps TODO PROLLY REMOVE"
+          "dotnet_diagnostic.SA1600.severity = none                     # ignore missing XML docs"
+          "dotnet_diagnostic.SA1633.severity = none                     # project file header TODO WHATS THIS" ]
 
     File.AppendAllLines(filePath, newSettingLines)
 
