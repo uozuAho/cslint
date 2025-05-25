@@ -20,6 +20,8 @@ dotnet format
 # Quick start: add linting to your project
 OVERWRITES YOUR PROJECT FILES! Make sure they're in source control.
 
+This adds my opinionated settings to your project.
+
 ```sh
 # see all warnings/errors before adding linting:
 pushd <your project root>
@@ -34,12 +36,19 @@ dotnet format
 ```
 
 # todo
-- get rid of cslint specific stuff in editorconfig
 - fix long lines: not part of built-in or added analysers :(
-- prevent missing awaits. CS4014. Should be caught, why isn't it?
-- fix "GenerateDocumentationFile to enable IDE0005" warning without needing XML
-  docs
-    - note that IDE0005 works without GenerateDocumentationFile
+- CS4014 quirk: `dotnet fix` applies a discard instead of awaiting the call.
+  Why? I want to await it. Example:
+    - ```cs
+      // before dotnet fix
+      DoThingAsync();
+      // after dotnet fix
+      _ = DoThingAsync();
+      ```
+    - see
+        - https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs4014
+        - https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/functional/discards
+- make add_linting.fsx easier to tweak
 - set stylecop warnings to errors. not possible? https://stackoverflow.com/questions/24804315/warnings-as-errors-does-not-apply-to-stylecop-warnings
 
 # Options
