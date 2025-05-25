@@ -5,10 +5,29 @@ work during build and as part of `dotnet format`.
 
 This project uses built-in analysers and a few extras. See details below.
 
+# Example: run in this project
 ```sh
 # to see warnings/errors:
 dotnet build
-# to fix:
+# add linting settings to this project:
+dotnet fsi add_linting.fsx .
+# fix formatting issues:
+dotnet format
+```
+
+# Quick start: add linting to your project
+OVERWRITES YOUR PROJECT FILES! Make sure they're in source control.
+
+```sh
+# see all warnings/errors before adding linting:
+pushd <your project root>
+dotnet build --force --no-incremental
+popd
+dotnet fsi add_linting.fsx <your project root>
+pushd <your project root>
+# see all warnings/errors:
+dotnet build --force --no-incremental
+# auto-fix where possible:
 dotnet format
 ```
 
@@ -29,22 +48,8 @@ See https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview
 These work well, and are available without any extra packages (although you may
 want to add more analysers to support your style requirements).
 
-When configured as below, they run during build, and many violations can be
-fixed by running `dotnet format`.
-
-Quick start to add to your projects:
-
-- enable all rules: add `<AnalysisMode>All</AnalysisMode>` to your project file
-- treat warnings as errors:
-  `<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>`
-- check code style during build: add
-  `<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>` to your project file
-- treat all style warnings as errors: add
-  `dotnet_analyzer_diagnostic.category-Style.severity = error` to your
-  editorconfig
-
-All checks are done during `dotnet build|run`
-Run `dotnet format` to autoformat.
+Using the settings added by `add_linting.fsx`, they run during build, and many
+violations can be fixed by running `dotnet format`.
 
 ### Built-in rules
 - quality (CA*): https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/
