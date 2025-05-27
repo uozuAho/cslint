@@ -80,6 +80,7 @@ let ensureEditorConfigSettings (filePath: string) =
           "[*.cs]"
           "csharp_style_namespace_declarations = file_scoped            # less indentation = easier reading"
           "csharp_using_directive_placement = inside_namespace          # see https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1200.md"
+          "dotnet_style_prefer_conditional_expression_over_return = false   # ... nah"
           "dotnet_analyzer_diagnostic.category-Style.severity = error   # warnings = error, otherwise you won't fix it"
           "dotnet_diagnostic.IDE0008.severity = none                    # prefer var over type names. Who doesn't like type inference?"
           "dotnet_diagnostic.CA2007.severity = none                     # avoid ConfigureAwait everywhere (intended for libraries)"
@@ -87,6 +88,9 @@ let ensureEditorConfigSettings (filePath: string) =
           "dotnet_diagnostic.CA5394.severity = none                     # insecure RNG is fine"
           "dotnet_diagnostic.VSTHRD100.severity = error                 # never use async void"
           "dotnet_diagnostic.SA0001.severity = none                     # ignore XML comment analysis"
+          "dotnet_diagnostic.SA1010.severity = none                     # square bracket spacing. conflicts with SA1001"
+          "dotnet_diagnostic.SA1101.severity = none                     # 'this.' doesn't work when doing record { with SomeField = ... }"
+          "dotnet_diagnostic.SA1118.severity = none                     # enable multiline params. Just my pref. Using variables is just as bad IMO."
           "dotnet_diagnostic.SA1600.severity = none                     # ignore missing XML docs"
           "dotnet_diagnostic.SA1633.severity = none                     # source files don't need 'header' doc comments" ]
 

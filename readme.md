@@ -21,6 +21,9 @@ dotnet format
 OVERWRITES YOUR PROJECT FILES! Make sure they're in source control.
 
 This adds my opinionated settings to your project. You should review these.
+If you've got a large solution with many csproj's, I recommend doing one at
+a time, so you can tweak your linting preferences incrementally while avoiding
+breaking the solution's build.
 
 ```sh
 # see all warnings/errors before adding linting:
@@ -62,6 +65,11 @@ are below. Note these may be due to individual and/or conflicting analysers.
         - https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/functional/discards
 - make add_linting.fsx easier to tweak
 - set stylecop warnings to errors. not possible? https://stackoverflow.com/questions/24804315/warnings-as-errors-does-not-apply-to-stylecop-warnings
+
+# interesting rules
+- [CA1062](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1062)
+  will still ping you if you've enabled nullable reference types. Why? Public
+  methods may be called by clients who haven't enabled nullable refs: https://github.com/dotnet/roslyn-analyzers/issues/2875#issuecomment-536408486
 
 # Options
 ## Built-in analysers
