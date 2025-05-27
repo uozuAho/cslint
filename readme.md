@@ -30,17 +30,25 @@ breaking the solution's build.
 pushd <your project root>
 dotnet build --force --no-incremental
 popd
-dotnet fsi add_linting.fsx <your project root>
+dotnet fsi add_linting.fsx <your project root> --edconfig
+dotnet fsi add_linting.fsx <your project root>/proj1 --csproj
 pushd <your project root>
 # see all warnings/errors:
 dotnet build --force --no-incremental
 # auto-fix where possible:
 dotnet format
+# add linting to next project
+dotnet fsi add_linting.fsx <your project root>/proj2 --csproj
+# and so on...
 ```
 
 # todo
 - fix long lines: not part of built-in or added analysers :(
 - fix/find workarounds for quirks below
+- add_linting script
+    - add `dotnet_diagnostic.CA1707.severity = none` to test projects
+        - non-root editorconfig
+        - allows test_names_with_underscores
 
 # quirks
 `dotnet format` seems a little rough compared to `eslint`. Problems I've found
