@@ -44,6 +44,8 @@ dotnet fsi add_linting.fsx <your project root>/proj2 --csproj
 
 # todo
 - fix long lines: not part of built-in or added analysers :(
+- remove redundant qualifiers on dotnet format
+    - eg. unnecessary System in System.Console
 - fix/find workarounds for quirks below
 - add_linting script
     - add `dotnet_diagnostic.CA1707.severity = none` to test projects
@@ -67,12 +69,16 @@ are below. Note these may be due to individual and/or conflicting analysers.
       DoThingAsync();
       // after dotnet fix
       _ = DoThingAsync();
+      // I want:
+      await DoThingAsync();
       ```
     - see
         - https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs4014
         - https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/functional/discards
 - make add_linting.fsx easier to tweak
 - set stylecop warnings to errors. not possible? https://stackoverflow.com/questions/24804315/warnings-as-errors-does-not-apply-to-stylecop-warnings
+- rider (IDE) sometimes shows warnings that have been disabled in .editorconfig
+    - workaround: restart IDE
 
 # interesting rules
 - [CA1062](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1062)
