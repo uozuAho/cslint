@@ -1,6 +1,8 @@
 ﻿// unnecessary import
 using System.IO;
+using mylib;
 
+// block scoped namespace, lowercase, wrong namespace. Want uppercased & file scoped
 namespace cslint
 {
     public static class Program
@@ -9,6 +11,8 @@ namespace cslint
         {
             var asdf = await DoThing();
             Console.WriteLine(asdf);
+
+            Class1.SayHello();
 
             // long line
             var alskdjflaksjdflkjasjdfljkasdjfalskdfj = 123456789 + 123456789 + 123456789 + 123456789 + 123456789 + 123456789;
