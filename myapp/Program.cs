@@ -50,7 +50,10 @@ namespace cslint
         private static void SomeSyncMethod()
         {
             // dotnet format quirk:
-            // I want to await this, not discard.
+            // I want this method to become async, and to await the call to
+            // BadAsyncVoidFunc. However, dotnet format updates the call to:
+            // _ = BadAsyncVoidFunc();
+            // and keeps this method sync. Am I wrong?
             // Also, this takes two passes of dotnet format to fix
             BadAsyncVoidFunc();
         }

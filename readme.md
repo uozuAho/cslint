@@ -45,8 +45,6 @@ dotnet fsi add_linting.fsx <your project root>/proj2 --csproj
 ```
 
 # todo
-- doc myapp.Program.SomeSyncMethod: i want this to become async rather than
-  ignore the async task call
 - try try https://csharpier.com/
     - fix long lines: not part of built-in or added analysers :(
 - remove redundant qualifiers on dotnet format
