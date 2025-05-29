@@ -85,6 +85,7 @@ let ensureEditorConfigSettings (filePath: string) =
           "dotnet_style_prefer_conditional_expression_over_return = false   # ... nah"
           "dotnet_analyzer_diagnostic.category-Style.severity = error   # warnings = error, otherwise you won't fix it"
           "dotnet_diagnostic.IDE0008.severity = none                    # prefer var over type names. Who doesn't like type inference?"
+          "dotnet_diagnostic.IDE0130.severity = suggestion              # fixes dotnet format crash: https://github.com/dotnet/format/issues/1623"
           "dotnet_diagnostic.CA2007.severity = none                     # avoid ConfigureAwait everywhere (intended for libraries)"
           "dotnet_diagnostic.CA5394.severity = none                     # insecure RNG is fine"
           "dotnet_diagnostic.CS1591.severity = none                     # ignore missing XML docs"
