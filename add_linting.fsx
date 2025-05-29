@@ -89,15 +89,6 @@ let ensureEditorConfigSettings (filePath: string) =
           "dotnet_diagnostic.CA2007.severity = none                     # avoid ConfigureAwait everywhere (intended for libraries)"
           "dotnet_diagnostic.CA5394.severity = none                     # insecure RNG is fine"
           "dotnet_diagnostic.CS1591.severity = none                     # ignore missing XML docs"
-          "dotnet_diagnostic.SA0001.severity = none                     # ignore XML comment analysis"
-          "dotnet_diagnostic.SA1010.severity = none                     # square bracket spacing. conflicts with SA1001"
-          "dotnet_diagnostic.SA1101.severity = none                     # 'this.' doesn't work when doing record { with SomeField = ... }"
-          "dotnet_diagnostic.SA1118.severity = none                     # enable multiline params. Just my pref. Using variables is just as bad IMO."
-          """dotnet_diagnostic.SA1122.severity = none                     # allow "" instead of String.Empty"""
-          "dotnet_diagnostic.SA1309.severity = none                     # enable _underscorePrivateField. I don't like 'this.'"
-          "dotnet_diagnostic.SA1512.severity = none                     # single line comments can be followed by empty lines"
-          "dotnet_diagnostic.SA1600.severity = none                     # ignore missing XML docs"
-          "dotnet_diagnostic.SA1633.severity = none                     # source files don't need 'header' doc comments"
           "dotnet_diagnostic.VSTHRD100.severity = error                 # never use async void"
           ]
 
@@ -123,7 +114,6 @@ let main (argv: string array) =
             for file in csProjFiles do
                 addLintSettings file
                 runDotnetAddPackage file "Microsoft.VisualStudio.Threading.Analyzers"
-                runDotnetAddPackage file "StyleCop.Analyzers"
 
         0
 
