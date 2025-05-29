@@ -6,9 +6,14 @@ public class Class1
 
     private int _myNumber = 213;
 
+    public void PrintMyNumber()
+    {
+        Console.WriteLine($"hello from mylib. My number is {_myNumber}");
+    }
+
     public static void SayHello()
     {
-        Console.WriteLine("hello from mylib");
+        Console.WriteLine($"hello from mylib");
     }
 
     public string DoStuff(int num)

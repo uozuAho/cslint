@@ -9,12 +9,15 @@ This project uses built-in analysers and a few extras. See details below.
 ```sh
 # to see existing warnings/errors:
 dotnet build --force --no-incremental
+# TODO try this instead? dotnet format --verify-no-changes
 # add linting settings to this project:
 dotnet fsi add_linting.fsx .
 # to see warnings/errors after adding linting:
 dotnet build --force --no-incremental
 # fix formatting issues:
 dotnet format
+# TODO try this
+dotnet format style
 ```
 
 # Quick start: add linting to your project
