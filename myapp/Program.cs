@@ -21,6 +21,10 @@ namespace cslint
             // missing await. why doesn't this trigger CS4014? https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs4014
             // I want to await this, not _ = DoThing();
             var x = DoThing();
+
+            // "" is easier to read than String.Empty
+            Console.WriteLine("");
+
             return 0;
         }
 
