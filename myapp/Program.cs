@@ -1,6 +1,8 @@
 ﻿// unnecessary import
 using System.IO;
+using mylib;
 
+// block scoped namespace, lowercase, wrong namespace. Want uppercased & file scoped
 namespace cslint
 {
     public static class Program
@@ -10,6 +12,8 @@ namespace cslint
             var asdf = await DoThing();
             Console.WriteLine(asdf);
 
+            Class1.SayHello();
+
             // long line
             var alskdjflaksjdflkjasjdfljkasdjfalskdfj = 123456789 + 123456789 + 123456789 + 123456789 + 123456789 + 123456789;
             Console.WriteLine(alskdjflaksjdflkjasjdfljkasdjfalskdfj);
@@ -17,6 +21,10 @@ namespace cslint
             // missing await. why doesn't this trigger CS4014? https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs4014
             // I want to await this, not _ = DoThing();
             var x = DoThing();
+
+            // "" is easier to read than String.Empty
+            Console.WriteLine("");
+
             return 0;
         }
 

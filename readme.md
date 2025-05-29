@@ -8,17 +8,19 @@ This project uses built-in analysers and a few extras. See details below.
 # Example: run in this project
 ```sh
 # to see existing warnings/errors:
-dotnet build --force --no-incremental
+dotnet format --verify-no-changes
 # add linting settings to this project:
 dotnet fsi add_linting.fsx .
 # to see warnings/errors after adding linting:
-dotnet build --force --no-incremental
-# fix formatting issues:
+dotnet format --verify-no-changes
+# fix formatting issues. Two runs necessary - watch what happens to
+# myapp.Program.SomeSyncMethod on each run
+dotnet format
 dotnet format
 ```
 
 # Quick start: add linting to your project
-OVERWRITES YOUR PROJECT FILES! Make sure they're in source control.
+MODIFIES YOUR PROJECT FILES! Make sure they're in source control.
 
 This adds my opinionated settings to your project. You should review these.
 If you've got a large solution with many csproj's, I recommend doing one at
@@ -43,9 +45,13 @@ dotnet fsi add_linting.fsx <your project root>/proj2 --csproj
 ```
 
 # todo
-- fix long lines: not part of built-in or added analysers :(
+- doc myapp.Program.SomeSyncMethod: i want this to become async rather than
+  ignore the async task call
+- try try https://csharpier.com/
+    - fix long lines: not part of built-in or added analysers :(
 - remove redundant qualifiers on dotnet format
     - eg. unnecessary System in System.Console
+    - add example for this
 - fix/find workarounds for quirks below
 - add_linting script
     - add `dotnet_diagnostic.CA1707.severity = none` to test projects
@@ -59,9 +65,11 @@ are below. Note these may be due to individual and/or conflicting analysers.
 - some fixes take two runs to fix eg.
     - run 1: async void method changed to async task
     - run 2: fix non-awaiting caller (badly, see CS4014 below)
+    - watch this happen in `myapp.Program.SomeSyncMethod`
 - some fixes break the build. eg.
     - `var asdf = new[] {new[] {1}, new[] {2}};` changes to
     - `var asdf = new[] {new[] [1], [2]}` <--- this does not compile
+    - **todo** is this still happening after removing stylecop?
 - CS4014 quirk: `dotnet fix` applies a discard instead of awaiting the call.
   Why? I want to await it. Example:
     - ```cs
@@ -85,7 +93,10 @@ are below. Note these may be due to individual and/or conflicting analysers.
   will still ping you if you've enabled nullable reference types. Why? Public
   methods may be called by clients who haven't enabled nullable refs: https://github.com/dotnet/roslyn-analyzers/issues/2875#issuecomment-536408486
 
-# Options
+
+--------------------------------------------------------------
+
+# Formatter / linter options
 ## Built-in analysers
 See https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview?tabs=net-8
 
@@ -103,8 +114,14 @@ violations can be fixed by running `dotnet format`.
 - [Microsoft.VisualStudio.Threading.Analyzers](https://github.com/microsoft/vs-threading/blob/main/doc/analyzers/index.md):
     - naming: Async suffix, prevent async void, more
     - doesn't catch missing awaits
+
+### Analysers not added to this project
 - [StyleCop.Analyzers](https://github.com/DotNetAnalyzers/StyleCopAnalyzers)
-    - whitespace, regions, more
+    - cleans up unnecessary whitespace, regions, namespace naming
+    - bit more pedantic than built in rules
+    - unfortunately, seems a little out of date, and conflicts with some built-
+      in rules. Some examples:
+        - doesn't like uppercase parameter names in record primary constructors
 
 ### Other interesting analysers:
 - Microsoft.CodeAnalysis.BannedApiAnalyzers
