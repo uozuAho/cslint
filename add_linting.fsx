@@ -130,6 +130,21 @@ let installCsharpier projRoot =
         | Ok _ -> doInstall()
 
 
+let ensureRunLinterBashScript projRoot =
+    let path = Path.Combine [|projRoot; "lint_and_format.sh"|];
+    if Path.Exists path then
+        Ok "nothing to do"
+    else
+        File.WriteAllLines(path, [
+            "#!/bin/bash"
+            "# two formats - some fixes expose other violations"
+            "dotnet format"
+            "dotnet format"
+            "dotnet csharpier format ."
+        ])
+        run $"chmod +x {path}"
+
+
 let main (argv: string array) =
     if argv.Length < 1 then
         printfn $"Usage: dotnet fsi {__SOURCE_FILE__} <directory> [--edconfig] [--csproj] [--csharpier]"
@@ -155,6 +170,9 @@ let main (argv: string array) =
             for file in csProjFiles do
                 addLintSettings file
                 runDotnetAddPackage file "Microsoft.VisualStudio.Threading.Analyzers"
+        match ensureRunLinterBashScript rootDir with
+        | Ok _ -> ()
+        | Error e -> failwith e
 
         0
 
