@@ -47,9 +47,6 @@ dotnet fsi add_linting.fsx <your project root>/proj2 --csproj
     - DONE try it
     - DONE add lint and format script
     - DONE add help msg to end of add_linting script
-    - clean linting script
-        - use run for other cmd calls
-        - use result type everywhere
     - add more docs
         - why csharpier
 - make add_linting.fsx easier to tweak
