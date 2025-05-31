@@ -50,6 +50,8 @@ dotnet fsi add_linting.fsx <your project root>/proj2 --csproj
     - add more docs
         - why csharpier
 - make add_linting.fsx easier to tweak
+- make add_linting a C# script: https://devblogs.microsoft.com/dotnet/announcing-dotnet-run-app/
+    - sorry F#, I want to love you
 - fix/find workarounds for quirks below
 - add_linting script
     - add `dotnet_diagnostic.CA1707.severity = none` to test projects
