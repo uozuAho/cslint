@@ -147,6 +147,8 @@ let ensureRunLinterBashScript projRoot =
             "    dotnet format"
             "    dotnet format"
             "    dotnet csharpier format ."
+            "    echo ''"
+            "    echo 'Done. Note that some manual fixes may be required.'"
             "else"
             """    echo usage: "$0 [check|fix]" """
             "fi"
