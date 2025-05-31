@@ -1,9 +1,9 @@
 # Example project to test linters
 
-Seems like the modern way to do it (as of 2024) is to use roslyn analysers, that
-work during build and as part of `dotnet format`.
 
-This project uses built-in analysers and a few extras. See details below.
+Also contains a script to add opinionated static analysis and formatting to
+your C# project.
+
 
 # Example: run in this project
 ```sh
@@ -16,6 +16,7 @@ dotnet fsi add_linting.fsx .
 # auto-fix where possible. You may need to do some manual fixes.
 ./lint_and_format.sh fix
 ```
+
 
 # Quick start: add linting to your project
 MODIFIES YOUR PROJECT FILES! Make sure they're in source control.
@@ -41,14 +42,8 @@ dotnet fsi add_linting.fsx <your project root>/proj2 --csproj
 # ..and so on...
 ```
 
+
 # todo
-- https://csharpier.com/
-    - DONE add to add_linting script
-    - DONE try it
-    - DONE add lint and format script
-    - DONE add help msg to end of add_linting script
-    - add more docs
-        - why csharpier
 - make add_linting.fsx easier to tweak
 - make add_linting a C# script: https://devblogs.microsoft.com/dotnet/announcing-dotnet-run-app/
     - sorry F#, I want to love you
@@ -62,7 +57,10 @@ dotnet fsi add_linting.fsx <your project root>/proj2 --csproj
 `dotnet format` seems a little rough compared to `eslint`. Problems I've found
 are below. Note these may be due to individual and/or conflicting analysers.
 
-- some fixes take two runs to fix eg.
+- doesn't do basic formatting! Argh!
+    - wrapping long lines, unnecessary whitespace, tabs v spaces
+    - workaround used: use https://csharpier.com
+- some `dotnet format` fixes take two runs to fix eg.
     - run 1: async void method changed to async task
     - run 2: fix non-awaiting caller (badly, see CS4014 below)
     - watch this happen in `myapp.Program.SomeSyncMethod`
@@ -95,14 +93,15 @@ are below. Note these may be due to individual and/or conflicting analysers.
 --------------------------------------------------------------
 
 # Formatter / linter options
-## Built-in analysers
+## .NET analysers
+It seems like the modern way to do it (as of 2024) is to use roslyn analysers,
+that work during build and as part of `dotnet format`.
+
 See https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview?tabs=net-8
 
-These work well, and are available without any extra packages (although you may
-want to add more analysers to support your style requirements).
-
-Using the settings added by `add_linting.fsx`, they run during build, and many
-violations can be fixed by running `dotnet format`.
+These mostly work, integrate with many IDEs, and are available without any extra
+packages (although you may want to add more analysers to support your style
+requirements).
 
 ### Built-in rules
 - quality (CA*): https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/
@@ -124,6 +123,16 @@ violations can be fixed by running `dotnet format`.
 ### Other interesting analysers:
 - Microsoft.CodeAnalysis.BannedApiAnalyzers
 - Microsoft.CodeAnalysis.PublicApiAnalyzers
+
+
+## CSharpier
+The phrase `dotnet format` gave me hope that this would apply Microsoft's
+official formatting rules to your project. However, it misses a bunch of basic
+formatting that is sorely needed IMO - long lines, unnecessary whitespace, tabs
+v spaces etc.
+
+[CSharpier](https://csharpier.com/) does just this. Phew.
+
 
 ## Roslynator
 I can't get this to work properly:
