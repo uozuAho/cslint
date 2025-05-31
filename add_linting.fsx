@@ -183,15 +183,16 @@ let main (argv: string array) =
         | Ok _ -> ()
         | Error e -> failwith e
 
-        printfn "Done"
         printfn ""
-        printfn "To run checks without formatting files, run"
+        printfn "Done."
         printfn ""
-        printfn "./lint_and_format.sh check"
+        printfn "To run checks without formatting files, run:"
+        printfn ""
+        printfn "   ./lint_and_format.sh check"
         printfn ""
         printfn "To make all possible fixes, run:"
         printfn ""
-        printfn "./lint_and_format.sh fix"
+        printfn "   ./lint_and_format.sh fix"
 
         0
 
