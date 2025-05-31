@@ -75,6 +75,27 @@ let runDotnetAddPackage (projectPath: string) (packageName: string) =
         printfn $"✗ Failed to add {packageName} to {projectPath}\n{error}"
 
 
+let run (cmd:string) =
+    let psi = ProcessStartInfo()
+    psi.FileName <- Array.head (cmd.Split ' ')
+    psi.Arguments <- String.Join(' ', Array.tail (cmd.Split ' '))
+    psi.RedirectStandardOutput <- true
+    psi.RedirectStandardError <- true
+    psi.UseShellExecute <- false
+
+    use proc = new Process()
+    proc.StartInfo <- psi
+    proc.Start() |> ignore
+    let output = proc.StandardOutput.ReadToEnd()
+    let error = proc.StandardError.ReadToEnd()
+    proc.WaitForExit()
+
+    if proc.ExitCode = 0 then
+        Ok output
+    else
+        Error error
+
+
 let ensureEditorConfigSettings (filePath: string) =
     // assumes there's no existing *.cs section or any matching settings
     let newSettingLines =
@@ -95,20 +116,40 @@ let ensureEditorConfigSettings (filePath: string) =
     File.AppendAllLines(filePath, newSettingLines)
 
 
+let installCsharpier projRoot =
+    let manifest = Path.Combine [|projRoot; ".config/dotnet-tools.json"|]
+    let doInstall = fun () ->
+        match run $"dotnet tool install csharpier --tool-manifest {manifest}" with
+        | Ok x -> Ok x
+        | Error e -> Error $"Failed to install csharpier: {e}"
+    match Path.Exists manifest with
+    | true -> doInstall()
+    | false ->
+        match run $"dotnet new tool-manifest --project {projRoot}" with
+        | Error e -> Error $"failed to install tool manifest: {e}"
+        | Ok _ -> doInstall()
+
+
 let main (argv: string array) =
     if argv.Length < 1 then
-        printfn $"Usage: dotnet fsi {__SOURCE_FILE__} <directory> [--edconfig] [--csproj]"
+        printfn $"Usage: dotnet fsi {__SOURCE_FILE__} <directory> [--edconfig] [--csproj] [--csharpier]"
         1
     else
         let rootDir = argv.[0]
         let hasEdConfigOption = Array.contains "--edconfig" argv
         let hasCsProjOption = Array.contains "--csproj" argv
-        let noOptions = not hasEdConfigOption && not hasCsProjOption
+        let hasCsharpierOption = Array.contains "--csharpier" argv
+        let noOptions = not hasEdConfigOption && not hasCsProjOption && not hasCsharpierOption
         let doEdConfig = hasEdConfigOption || noOptions
         let doCsProj = hasCsProjOption || noOptions
+        let doCsharpier = hasCsharpierOption || noOptions
 
         if doEdConfig then
             ensureEditorConfigSettings (Path.Combine [| rootDir; ".editorconfig" |])
+        if doCsharpier then
+            match installCsharpier rootDir with
+            | Ok _ -> ()
+            | Error e -> failwith e
         if doCsProj then
             let csProjFiles = findAllCsprojFiles rootDir
             for file in csProjFiles do
