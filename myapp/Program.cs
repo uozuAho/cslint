@@ -12,7 +12,8 @@ namespace cslint
             var asdf = await DoThing();
             Console.WriteLine(asdf);
 
-            Class1.SayHello();
+            // redundant qualifier
+            mylib.Class1.SayHello();
 
             // long line
             var alskdjflaksjdflkjasjdfljkasdjfalskdfj = 123456789 + 123456789 + 123456789 + 123456789 + 123456789 + 123456789;
@@ -39,6 +40,7 @@ namespace cslint
 
             // unnecessary whitespace
 
+
         }
 
         // don't do async void
@@ -62,4 +64,10 @@ namespace cslint
         #region AASDF
         #endregion
     }
+    // more unnecessary whitespace
+
 }
+
+
+
+// even more unnecessary whitespace
