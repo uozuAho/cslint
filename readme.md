@@ -15,7 +15,7 @@ dotnet fsi add_linting.fsx .
 dotnet format --verify-no-changes
 # fix formatting issues. Two runs necessary - watch what happens to
 # myapp.Program.SomeSyncMethod on each run
-dotnet csharpier format
+dotnet csharpier format .
 dotnet format
 dotnet format
 ```
@@ -48,7 +48,8 @@ dotnet fsi add_linting.fsx <your project root>/proj2 --csproj
 # todo
 - https://csharpier.com/
     - DONE add to add_linting script
-    - try it
+    - DONE try it
+    - add lint and format script
     - clean linting script
         - use run for other cmd calls
         - use result type everywhere
