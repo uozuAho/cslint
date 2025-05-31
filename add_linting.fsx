@@ -54,27 +54,6 @@ let addLintSettings (csProjFile: string) =
         printfn $"Updated: {csProjFile}"
 
 
-let runDotnetAddPackage (projectPath: string) (packageName: string) =
-    let psi = ProcessStartInfo()
-    psi.FileName <- "dotnet"
-    psi.Arguments <- $"add \"{projectPath}\" package {packageName}"
-    psi.RedirectStandardOutput <- true
-    psi.RedirectStandardError <- true
-    psi.UseShellExecute <- false
-
-    use proc = new Process()
-    proc.StartInfo <- psi
-    proc.Start() |> ignore
-    let output = proc.StandardOutput.ReadToEnd()
-    let error = proc.StandardError.ReadToEnd()
-    proc.WaitForExit()
-
-    if proc.ExitCode = 0 then
-        printfn $"✓ Added package {packageName} to {projectPath}"
-    else
-        printfn $"✗ Failed to add {packageName} to {projectPath}\n{error}"
-
-
 let run (cmd:string) =
     let psi = ProcessStartInfo()
     psi.FileName <- Array.head (cmd.Split ' ')
@@ -180,7 +159,9 @@ let main (argv: string array) =
             let csProjFiles = findAllCsprojFiles rootDir
             for file in csProjFiles do
                 addLintSettings file
-                runDotnetAddPackage file "Microsoft.VisualStudio.Threading.Analyzers"
+                match run $"""dotnet add "{file}" package Microsoft.VisualStudio.Threading.Analyzers""" with
+                | Ok _ -> ()
+                | Error e -> failwith e
         match ensureRunLinterBashScript rootDir with
         | Ok _ -> ()
         | Error e -> failwith e
@@ -195,6 +176,7 @@ let main (argv: string array) =
         printfn "To make all possible fixes, run:"
         printfn ""
         printfn "   ./lint_and_format.sh fix"
+        printfn ""
 
         0
 
