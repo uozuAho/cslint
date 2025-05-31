@@ -12,12 +12,9 @@ dotnet format --verify-no-changes
 # add linting settings to this project:
 dotnet fsi add_linting.fsx .
 # to see warnings/errors after adding linting:
-dotnet format --verify-no-changes
-# fix formatting issues. Two runs necessary - watch what happens to
-# myapp.Program.SomeSyncMethod on each run
-dotnet csharpier format .
-dotnet format
-dotnet format
+./lint_and_format.sh check
+# auto-fix where possible. You may need to do some manual fixes.
+./lint_and_format.sh fix
 ```
 
 # Quick start: add linting to your project
@@ -33,30 +30,29 @@ breaking the solution's build.
 pushd <your project root>
 dotnet build --force --no-incremental
 popd
-dotnet fsi add_linting.fsx <your project root> --edconfig
+dotnet fsi add_linting.fsx <your project root> --edconfig --csharpier
 dotnet fsi add_linting.fsx <your project root>/proj1 --csproj
-pushd <your project root>
-# see all warnings/errors:
-dotnet build --force --no-incremental
-# auto-fix where possible:
-dotnet format
+./lint_and_format.sh check
+./lint_and_format.sh fix
 # add linting to next project
 dotnet fsi add_linting.fsx <your project root>/proj2 --csproj
-# and so on...
+./lint_and_format.sh check
+./lint_and_format.sh fix
+# ..and so on...
 ```
 
 # todo
 - https://csharpier.com/
     - DONE add to add_linting script
     - DONE try it
-    - add lint and format script
-    - add help msg to end of add_linting script
+    - DONE add lint and format script
+    - DONE add help msg to end of add_linting script
     - clean linting script
         - use run for other cmd calls
         - use result type everywhere
-- remove redundant qualifiers on dotnet format
-    - eg. unnecessary System in System.Console
-    - add example for this
+    - add more docs
+        - why csharpier
+- make add_linting.fsx easier to tweak
 - fix/find workarounds for quirks below
 - add_linting script
     - add `dotnet_diagnostic.CA1707.severity = none` to test projects
@@ -88,8 +84,6 @@ are below. Note these may be due to individual and/or conflicting analysers.
     - see
         - https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs4014
         - https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/functional/discards
-- make add_linting.fsx easier to tweak
-- set stylecop warnings to errors. not possible? https://stackoverflow.com/questions/24804315/warnings-as-errors-does-not-apply-to-stylecop-warnings
 - rider (IDE) sometimes shows warnings that have been disabled in .editorconfig
     - workaround: restart IDE
 
