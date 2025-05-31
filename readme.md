@@ -46,7 +46,7 @@ dotnet fsi add_linting.fsx <your project root>/proj2 --csproj
 
 # todo
 - try try https://csharpier.com/
-    - fix long lines: not part of built-in or added analysers :(
+    - add to add_linting script
 - remove redundant qualifiers on dotnet format
     - eg. unnecessary System in System.Console
     - add example for this
