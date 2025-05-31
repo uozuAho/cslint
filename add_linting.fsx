@@ -137,10 +137,19 @@ let ensureRunLinterBashScript projRoot =
     else
         File.WriteAllLines(path, [
             "#!/bin/bash"
-            "# two formats - some fixes expose other violations"
-            "dotnet format"
-            "dotnet format"
-            "dotnet csharpier format ."
+            "CMD=$1"
+            ""
+            """if [[ $CMD = "check" ]]; then"""
+            "   dotnet format --verify-no-changes"
+            "   dotnet csharpier check ."
+            """elif [[ $CMD = "fix" ]]; then"""
+            "   # two formats - some fixes expose other violations"
+            "   dotnet format"
+            "   dotnet format"
+            "   dotnet csharpier format ."
+            "else"
+            "   usage: $0 [check|fix]"
+            "fi"
         ])
         run $"chmod +x {path}"
 
@@ -173,6 +182,16 @@ let main (argv: string array) =
         match ensureRunLinterBashScript rootDir with
         | Ok _ -> ()
         | Error e -> failwith e
+
+        printfn "Done"
+        printfn ""
+        printfn "To run checks without formatting files, run"
+        printfn ""
+        printfn "./lint_and_format.sh check"
+        printfn ""
+        printfn "To make all possible fixes, run:"
+        printfn ""
+        printfn "./lint_and_format.sh fix"
 
         0
 
