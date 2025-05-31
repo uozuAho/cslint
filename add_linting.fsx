@@ -54,10 +54,10 @@ let addLintSettings (csProjFile: string) =
         printfn $"Updated: {csProjFile}"
 
 
-let runDotnetAddPackage (projectPath: string) (packageName: string) =
+let run (cmd:string) =
     let psi = ProcessStartInfo()
-    psi.FileName <- "dotnet"
-    psi.Arguments <- $"add \"{projectPath}\" package {packageName}"
+    psi.FileName <- Array.head (cmd.Split ' ')
+    psi.Arguments <- String.Join(' ', Array.tail (cmd.Split ' '))
     psi.RedirectStandardOutput <- true
     psi.RedirectStandardError <- true
     psi.UseShellExecute <- false
@@ -70,9 +70,9 @@ let runDotnetAddPackage (projectPath: string) (packageName: string) =
     proc.WaitForExit()
 
     if proc.ExitCode = 0 then
-        printfn $"✓ Added package {packageName} to {projectPath}"
+        Ok output
     else
-        printfn $"✗ Failed to add {packageName} to {projectPath}\n{error}"
+        Error error
 
 
 let ensureEditorConfigSettings (filePath: string) =
@@ -94,28 +94,113 @@ let ensureEditorConfigSettings (filePath: string) =
 
     File.AppendAllLines(filePath, newSettingLines)
 
+    Ok ""
+
+
+let installCsharpier projRoot =
+    let manifest = Path.Combine [|projRoot; ".config/dotnet-tools.json"|]
+    let doInstall = fun () ->
+        match run $"dotnet tool install csharpier --tool-manifest {manifest}" with
+        | Ok x -> Ok x
+        | Error e -> Error $"Failed to install csharpier: {e}"
+    match Path.Exists manifest with
+    | true -> doInstall()
+    | false ->
+        match run $"dotnet new tool-manifest --project {projRoot}" with
+        | Error e -> Error $"failed to install tool manifest: {e}"
+        | Ok _ -> doInstall()
+
+
+let ensureRunLinterBashScript projRoot =
+    let path = Path.Combine [|projRoot; "lint_and_format.sh"|];
+    if Path.Exists path then
+        Ok "nothing to do"
+    else
+        File.WriteAllLines(path, [
+            "#!/bin/bash"
+            "CMD=$1"
+            ""
+            """if [[ $CMD = "check" ]]; then"""
+            "    dotnet format --verify-no-changes"
+            "    dotnet csharpier check ."
+            """elif [[ $CMD = "fix" ]]; then"""
+            "    # two formats - some fixes expose other violations"
+            "    dotnet format"
+            "    dotnet format"
+            "    dotnet csharpier format ."
+            "    echo ''"
+            "    echo 'Done. Note that some manual fixes may be required.'"
+            "else"
+            """    echo usage: "$0 [check|fix]" """
+            "fi"
+        ])
+        run $"chmod +x {path}"
+
+
+let printSuccessMessage =
+    printfn ""
+    printfn "Done."
+    printfn ""
+    printfn "To run checks without formatting files, run:"
+    printfn ""
+    printfn "   ./lint_and_format.sh check"
+    printfn ""
+    printfn "To make all possible fixes, run:"
+    printfn ""
+    printfn "   ./lint_and_format.sh fix"
+    printfn ""
+    Ok ""
+
+
+let runAllTasks tasks =
+    tasks |> List.fold (fun acc task ->
+        match acc with
+        | Error e -> Error e
+        | Ok _ -> task
+    ) (Ok "")
+
 
 let main (argv: string array) =
     if argv.Length < 1 then
-        printfn $"Usage: dotnet fsi {__SOURCE_FILE__} <directory> [--edconfig] [--csproj]"
+        printfn $"Usage: dotnet fsi {__SOURCE_FILE__} <directory> [--edconfig] [--csproj] [--csharpier]"
         1
     else
         let rootDir = argv.[0]
         let hasEdConfigOption = Array.contains "--edconfig" argv
         let hasCsProjOption = Array.contains "--csproj" argv
-        let noOptions = not hasEdConfigOption && not hasCsProjOption
+        let hasCsharpierOption = Array.contains "--csharpier" argv
+        let noOptions = not hasEdConfigOption && not hasCsProjOption && not hasCsharpierOption
         let doEdConfig = hasEdConfigOption || noOptions
         let doCsProj = hasCsProjOption || noOptions
+        let doCsharpier = hasCsharpierOption || noOptions
 
-        if doEdConfig then
-            ensureEditorConfigSettings (Path.Combine [| rootDir; ".editorconfig" |])
-        if doCsProj then
-            let csProjFiles = findAllCsprojFiles rootDir
-            for file in csProjFiles do
-                addLintSettings file
-                runDotnetAddPackage file "Microsoft.VisualStudio.Threading.Analyzers"
+        let tasks = [
+            match doEdConfig with
+            | true -> ensureEditorConfigSettings (Path.Combine [| rootDir; ".editorconfig" |])
+            | false -> Ok ""
 
-        0
+            match doCsharpier with
+            | true -> installCsharpier rootDir
+            | false -> Ok ""
+
+            match doCsProj with
+            | false -> Ok ""
+            | true ->
+                let csProjFiles = findAllCsprojFiles rootDir
+                // todo: i think this will only return the result of the last loop
+                for file in csProjFiles do
+                    addLintSettings file
+                    run $"""dotnet add "{file}" package Microsoft.VisualStudio.Threading.Analyzers"""
+
+            ensureRunLinterBashScript rootDir
+            printSuccessMessage
+        ]
+
+        match runAllTasks tasks with
+        | Ok _ -> 0
+        | Error e ->
+            printfn $"{e}"
+            -1
 
 
 let args = fsi.CommandLineArgs |> Array.tail
