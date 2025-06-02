@@ -1,57 +1,21 @@
 # Example project to test linters
 
 
-Also contains a script to add opinionated static analysis and formatting to
-your C# project.
-
-
-# Example: run in this project
+# Add linting to your solution
 ```sh
-# to see existing warnings/errors:
-dotnet format --verify-no-changes
-# add linting settings to this project:
-dotnet fsi add_linting.fsx .
-# to see warnings/errors after adding linting:
-./lint_and_format.sh check
-# auto-fix where possible. You may need to do some manual fixes.
-./lint_and_format.sh fix
+# run this. It assumes your solution doesn't contain existing linting resources.
+./install_linting.sh
+
+# try it out
+cd <your solution>
+./lint.sh check
+./lint.sh fix
 ```
 
+For a large solution with many projects, you may need to temporarily
+remove/comment out `Directory.Build.props` to un-break the build while you are
+fixing all linting issues.
 
-# Quick start: add linting to your project
-MODIFIES YOUR PROJECT FILES! Make sure they're in source control.
-
-This adds my opinionated settings to your project. You should review these.
-If you've got a large solution with many csproj's, I recommend doing one at
-a time, so you can tweak your linting preferences incrementally while avoiding
-breaking the solution's build.
-
-```sh
-# see all warnings/errors before adding linting:
-pushd <your project root>
-dotnet build --force --no-incremental
-popd
-dotnet fsi add_linting.fsx <your project root> --edconfig --csharpier
-dotnet fsi add_linting.fsx <your project root>/proj1 --csproj
-./lint_and_format.sh check
-./lint_and_format.sh fix
-# add linting to next project
-dotnet fsi add_linting.fsx <your project root>/proj2 --csproj
-./lint_and_format.sh check
-./lint_and_format.sh fix
-# ..and so on...
-```
-
-
-# todo
-- make add_linting.fsx easier to tweak
-- make add_linting a C# script: https://devblogs.microsoft.com/dotnet/announcing-dotnet-run-app/
-    - sorry F#, I want to love you
-- fix/find workarounds for quirks below
-- add_linting script
-    - add `dotnet_diagnostic.CA1707.severity = none` to test projects
-        - non-root editorconfig
-        - allows test_names_with_underscores
 
 # quirks
 `dotnet format` seems a little rough compared to `eslint`. Problems I've found
@@ -126,10 +90,8 @@ requirements).
 
 
 ## CSharpier
-The phrase `dotnet format` gave me hope that this would apply Microsoft's
-official formatting rules to your project. However, it misses a bunch of basic
-formatting that is sorely needed IMO - long lines, unnecessary whitespace, tabs
-v spaces etc.
+`dotnet format` misses a bunch of basic formatting that is sorely needed IMO -
+long lines, unnecessary whitespace, tabs v spaces etc.
 
 [CSharpier](https://csharpier.com/) does just this. Phew.
 
