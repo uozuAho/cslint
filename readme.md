@@ -13,8 +13,15 @@ cd <your solution>
 ```
 
 For a large solution with many projects, you may need to temporarily
-remove/comment out `Directory.Build.props` to un-break the build while you are
-fixing all linting issues.
+remove/tweak/comment out `Directory.Build.props` to un-break the build while you
+are fixing all linting issues. I've configured the strictest possible
+properties, which is overwhelming when adding to an existing project of
+non-trivial size. It's probably a better approach to introduces small sets of
+rules at a time.
+
+See
+- https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/configuration-options
+- https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props
 
 
 # quirks
@@ -32,6 +39,26 @@ are below. Note these may be due to individual and/or conflicting analysers.
     - `var asdf = new[] {new[] {1}, new[] {2}};` changes to
     - `var asdf = new[] {new[] [1], [2]}` <--- this does not compile
     - **todo** is this still happening after removing stylecop?
+      - YES: add this to sample project
+      ```cs
+      public class TestData
+      {
+          public static IEnumerable TestCases
+          {
+              get
+              {
+                // this gets changed to new[] { [1], [2], [3] }, doesn't compile
+                  yield return new TestCaseData(new[] { 1, 2, 3 }, 3).Returns(new[]
+                  {
+                      new[] { 1 },
+                      new[] { 2 },
+                      new[] { 3 }
+                  });
+
+              }
+          }
+      }
+      ```
 - CS4014 quirk: `dotnet fix` applies a discard instead of awaiting the call.
   Why? I want to await it. Example:
     - ```cs
@@ -47,6 +74,8 @@ are below. Note these may be due to individual and/or conflicting analysers.
         - https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/functional/discards
 - rider (IDE) sometimes shows warnings that have been disabled in .editorconfig
     - workaround: restart IDE
+- some rules (eg. CA1852, CA1724) doesn't show up in rider, even after multiple
+  restarts, and don't get fixed by `dotnet format`.
 
 # interesting rules
 - [CA1062](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1062)
