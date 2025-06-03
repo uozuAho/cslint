@@ -21,4 +21,9 @@ public class UnitTest1
 
         Assert.Equal(record1, record2);
     }
+
+    public static int[][] MakeSomeTestData()
+    {
+        return new[] { new[] { 1 }, new[] { 2 }, new[] { 3 } };
+    }
 }
